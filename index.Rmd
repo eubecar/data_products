@@ -1,0 +1,83 @@
+---
+title       : Violent Crime Rates by US State
+subtitle    : Statistical Analysis
+author      : Carlos Ubeda
+job         : 
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : []            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+## Introduction
+
+This presentation aims at studying the relationship between several types of crime arrests in the US by state. An interactive shiny app can be found in the following link.
+
+[https://carubecas.shinyapps.io/my_app/](https://carubecas.shinyapps.io/my_app/)
+
+The data set contains statistics, in arrests per 100,000 residents for assault, murder, and rape in each of the 50 US states in 1973. Also given is the percent of the population living in urban areas.
+
+```{r}
+head(USArrests)
+```
+
+--- .class #id 
+
+## Murder vs. Urban Population
+
+```{r echo=FALSE, fig.align = 'center', fig.width = 10}
+library(ggplot2)
+g = ggplot( USArrests, aes( UrbanPop, Murder, label=rownames(USArrests)  ) )
+g = g + xlab("Urban Popoluation (percentage)")
+g = g + geom_point()
+g = g + geom_smooth( method = "lm")
+g = g + geom_text(color = "red")
+g = g + ylab("Murder Arrests (per 100,000)") 
+  print( g )
+```
+
+--- .class #id 
+
+## Murder vs. Assault
+
+```{r echo=FALSE, fig.align = 'center', fig.width = 10}
+library(ggplot2)
+g = ggplot( USArrests, aes( UrbanPop, Assault, label=rownames(USArrests)  ) )
+g = g + xlab("Assault Arrests (per 100,000)")
+g = g + geom_point()
+g = g + geom_smooth( method = "lm")
+g = g + geom_text(color = "red")
+g = g + ylab("Murder Arrests (per 100,000)") 
+  print( g )
+```
+
+--- .class #id 
+
+## Murder vs. Rape
+
+```{r echo=FALSE, fig.align = 'center', fig.width = 10}
+library(ggplot2)
+g = ggplot( USArrests, aes( UrbanPop, Murder, label=rownames(USArrests)  ) )
+g = g + xlab("Rape Arrests (per 100,000)")
+g = g + geom_point()
+g = g + geom_smooth( method = "lm")
+g = g + geom_text(color = "red")
+g = g + ylab("Murder Arrests (per 100,000)") 
+  print( g )
+```
+
+--- .class #id 
+
+## ANOVA Analysis
+
+The ANOVA analysis indicates that most of the variability on the murder arrests is explained by the assault arrests.
+
+```{r echo=FALSE}
+fit1 <- lm( Murder ~ Assault, USArrests )
+fit2 <- lm( Murder ~ Assault + Rape, USArrests )
+fit3 <- lm( Murder ~ Assault + Rape + UrbanPop, USArrests )
+anova123 <- anova( fit1, fit2, fit3 )
+anova123
+```
